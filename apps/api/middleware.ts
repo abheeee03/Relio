@@ -10,6 +10,7 @@ export const Authenticated = async (req: Request, res: Response, next: NextFunct
     }
     try{
         let decoded = jwt.verify(headers, process.env.JWT_SECRET as string)
+        console.log("jwt is : ", decoded);
         //@ts-ignore
         req.userId = decoded.userId as string;
         next();

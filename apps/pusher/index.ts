@@ -9,11 +9,10 @@ async function main(){
             url: true
         }
     })
-    
-    await xAddBulk(websites.map((w)=>({
-        id: w.id,
-        url: w.url
-    })))
+
+    console.log("pushing this shit to queue: ", websites);
+        
+    await xAddBulk(websites)
 }
 
 

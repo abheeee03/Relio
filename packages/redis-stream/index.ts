@@ -18,7 +18,8 @@ async function xAdd(w: WebsiteProp){
 }
 
 export async function xAddBulk(w: WebsiteProp[]) {
-    for(let i = 0; i <= w.length; i++){
+    
+    for(let i = 0; i < w.length; i++){
         await xAdd({
             id: w[i]!.id,
             url: w[i]!.url

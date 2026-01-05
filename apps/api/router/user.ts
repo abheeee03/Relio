@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { response, Router } from "express";
 import prisma from "store/client";
 import jwt from 'jsonwebtoken'
 
@@ -64,6 +64,28 @@ userRouter.post('/signin', async (req, res) => {
     })
 
 })
+
+userRouter.post('/add-region', async (req, res)=>{
+    const {name} = req.body
+    const repsonse = await prisma.region.create({
+        data: {
+            name 
+        }
+    })
+
+    if(!repsonse){
+        res.json({
+            error: "error while adding region"
+        })
+    }
+
+    res.json({
+        data: repsonse,
+        msg: "region added successfully"
+    })
+
+})
+
 
 export default userRouter
 

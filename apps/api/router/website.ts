@@ -5,7 +5,8 @@ const websiteRouter = Router()
 
 websiteRouter.post('/create', async (req, res)=>{
     const {url} = req.body;
-    const {userId} = req.body;
+    const userId = req.userId;
+    console.log("Req recieved for ", url, " and for userId: ", userId);    
     if(!url){
         res.json({
             error: "url is req"
@@ -16,7 +17,7 @@ websiteRouter.post('/create', async (req, res)=>{
     try{
         const response = await prisma.websites.create({
             data: {
-                user_id: userId,
+                user_id: userId!,
                 url
             }
         })
