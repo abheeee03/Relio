@@ -41,6 +41,7 @@ model ticks {
   status    Status
   region_id String
   website_id String
+  created_at DateTime @default(now())
   region  region @relation(fields: [region_id], references: [id])
   website websites @relation(fields: [website_id], references: [id])
 }
