@@ -12,7 +12,7 @@ async function main(){
 
     console.log("pushing this shit to queue: ", websites);
         
-    await xAddBulk(websites)
+    xAddBulk(websites)
 }
 
 

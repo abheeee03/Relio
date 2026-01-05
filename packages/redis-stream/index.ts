@@ -5,25 +5,60 @@ const client = await createClient({
 }).on("error", (err)=>console.log("error while connecting to redis: ", err)).connect();
 
 
+const REDIS_NAME = "relio:website"
+// harding coding this worker number here, ideally this should be a id for different workers for different regions 
+const worker_num = "1"
+
 type WebsiteProp = {
     id: string,
     url: string
 }
 
-async function xAdd(w: WebsiteProp){
-    await client.xAdd("relio:website", "*", {
-        id: w.id,
-        url: w.url
+type StreamResponse = {
+    name: string,
+    messages: {
+        id: string,
+        message: {
+            id: string,
+            url: string
+        }
+    }[]
+}[] | null
+
+
+async function xAdd({url, id}: WebsiteProp) {
+    await client.xAdd(
+        REDIS_NAME, '*', {
+            url,
+            id
+        }
+    );
+}
+
+export async function xAddBulk(websites: WebsiteProp[]) {
+    websites.forEach(async (w)=>{
+        await xAdd({url: w.url, id: w.id})
     })
 }
 
-export async function xAddBulk(w: WebsiteProp[]) {
-    
-    for(let i = 0; i < w.length; i++){
-        await xAdd({
-            id: w[i]!.id,
-            url: w[i]!.url
-        })
-    }    
+export async function xReadGroup(worker_id: string) : Promise<StreamResponse> {
+    const res = await client.xReadGroup(
+        worker_id,
+        worker_num,
+        {
+            key: REDIS_NAME,
+            id: '>'
+        }, {
+            COUNT: 5
+        }
+    )
+    return res as StreamResponse
 }
 
+async function xAck(consumerGroup: string, eventId: string) {
+    await client.xAck(REDIS_NAME, consumerGroup, eventId)
+}
+
+export async function xAckBulk(consumerGroup: string, eventIds: string[]) {
+    eventIds.map(eventId => xAck(consumerGroup, eventId));
+}
