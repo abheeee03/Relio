@@ -45,10 +45,38 @@ websiteRouter.get('/status/:id', async (req, res)=>{
         include: {
             ticks: {
                 orderBy: [{
-                    //@ts-ignore
                     created_at: "desc"
                 }],
                 take: 1
+            }
+        }
+    })
+
+    if(!website){
+        res.json({
+            error: "Website not found"
+        })
+        return
+    }
+
+    res.json({
+        data: website
+    })
+
+})
+websiteRouter.get('/ticks/:id', async (req, res)=>{
+    const {userId} = req.body;
+    const fromWebsiteId = req.params.id
+    const website = await prisma.websites.findFirst({
+        where: {
+            user_id: userId,
+            id: fromWebsiteId
+        },
+        include: {
+            ticks: {
+                orderBy: [{
+                    created_at: "desc"
+                }]
             }
         }
     })
