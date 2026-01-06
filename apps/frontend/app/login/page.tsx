@@ -1,29 +1,81 @@
+"use client"
+import CopyButton from '@/components/Copybtn'
 import { ThemeToggleButton } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import React from 'react'
+import { Spinner } from '@/components/ui/spinner'
+import { handelLogin } from '@/lib/actions'
+import { X } from 'lucide-react'
+import {motion} from 'motion/react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 function page() {
-  return (
-    <div className='h-screen tracking-tight w-full flex items-center justify-center'>
-        <div className="absolute top-5 right-5">
-               <ThemeToggleButton start="top-down" variant="rectangle" />
-            </div> 
-        <Card>
-            <CardTitle className='text-center font-semibold text-2xl'>
-                Login
-            </CardTitle>
-            <CardContent>
-                <div className="flex flex-col items-center justify-center gap-3">
-                    <Input placeholder='Username'/>
-                    <Input placeholder='Password'/>
-                    <Button className='w-full'>Login</Button>
-                </div>
-            </CardContent>
-        </Card>
-    </div>
-  )
+    const [username, setUsername] = useState<string | null>(null)
+    const [password, setPassword] = useState<string | null>(null)
+    const [currActive, setCurrActive] = useState<"BTN" | "MODAL">("BTN")
+    const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter()
+    return (
+        <div className='h-screen tracking-tight w-full flex items-center justify-center'>
+            <div className="absolute top-5 right-5">
+                <ThemeToggleButton start="top-down" variant="rectangle" />
+            </div>
+            <div className="absolute bottom-5 left-5">
+                {
+                    currActive === "BTN" && <motion.div onClick={()=>setCurrActive("MODAL")} layoutId='demo-account' className="relative border bg-accent cursor-pointer rounded-xl px-5 py-5">
+                    <motion.h1 layoutId='demo-head'>Use Demo Account</motion.h1>
+                    </motion.div>
+                }
+                {
+                    currActive === "MODAL" && <motion.div layoutId='demo-account' className='relative border bg-accent cursor-pointer rounded-xl px-5 py-5 flex flex-col items-start justify-center gap-4'>
+                    <div className="mb-3 flex w-full items-center justify-between">
+                    <motion.h1 layoutId='demo-head' className=''>Login Using Demo Account</motion.h1>
+                    <Button onClick={()=>setCurrActive("BTN")} variant={"ghost"}>
+                        <X size={15}/>
+                    </Button>
+                    </div>
+                    <div className="flex items-center justify-center gap-3">
+                        Username: 
+                        <Input value={"abhee"} readOnly/>
+                         <CopyButton url='abhee'/>
+                    </div>
+                    <div className="flex items-center justify-center gap-3">
+                        Password: 
+                        <Input value={"abhee"} readOnly/>
+                         <CopyButton url='abhee'/>
+                    </div>
+                </motion.div>
+                }
+            </div>
+            <Card>
+                <CardTitle className='text-center font-semibold text-2xl'>
+                    Login
+                </CardTitle>
+                <CardContent>
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <Input onChange={(e)=>setUsername(e.target.value)} placeholder='Username' />
+                        <Input onChange={(e)=>setPassword(e.target.value)} placeholder='Password' />
+                        <Button onClick={async ()=>{
+                            setIsLoading(true)
+                            const isValid = await handelLogin(username, password)
+                            if(!isValid){
+                                setIsLoading(false)
+                                toast("Invalid Credentials or Something went wrong")
+                                return
+                            }
+                            router.push('/home');
+                            toast("Login Success")
+                        }} className='w-full' disabled={isLoading} >
+                            {isLoading && <Spinner/>} Login
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
 }
 
 export default page
