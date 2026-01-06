@@ -4,6 +4,7 @@ import { Website } from '@/app/[websiteID]/page'
 import { PingingDotChart } from './ChartComp'
 import { Table, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 
 function WebsiteDetails({data}: {data: Website}) {
   return (

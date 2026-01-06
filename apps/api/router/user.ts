@@ -1,6 +1,7 @@
 import { response, Router } from "express";
 import prisma from "store/client";
 import jwt from 'jsonwebtoken'
+import { Authenticated } from "../middleware";
 
 const userRouter = Router()
 
@@ -84,6 +85,41 @@ userRouter.post('/add-region', async (req, res)=>{
         msg: "region added successfully"
     })
 
+})
+
+
+userRouter.get('/me', Authenticated, async (req, res)=>{
+    const {userId} = req;
+    try{
+        const data = await prisma.user.findFirst({
+            where: {
+                id: userId
+            },
+            select: {
+                websites: {
+                    select: {
+                        id: true,
+                        url: true,
+                        ticks: {
+                            select: {
+                                status: true,
+                            }, 
+                            orderBy: {
+                                created_at: "desc"
+                            },
+                            take: 1
+                        }
+                    }
+                }
+            }
+        })
+        res.json({
+            data
+        })
+    } catch (err){
+        console.log(err);
+        res.json("something went wrong")
+    }
 })
 
 
