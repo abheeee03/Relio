@@ -15,16 +15,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { month: "January", india: 186 },
+  { month: "February", india: 305 },
+  { month: "March", india: 237 },
+  { month: "April", india: 73 },
+  { month: "May", india: 209 },
+  { month: "June", india: 214 },
 ];
 
 const chartConfig = {
@@ -39,16 +37,8 @@ export function PingingDotChart() {
     <Card>
       <CardHeader>
         <CardTitle>
-          Pinging Dot Chart
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
+          Response Time
         </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -73,7 +63,7 @@ export function PingingDotChart() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Line
-              dataKey="desktop"
+              dataKey="india"
               type="linear"
               stroke="var(--color-desktop)"
               strokeDasharray="4 4"

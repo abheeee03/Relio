@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { handelLogin } from '@/lib/actions'
+import { getToken, handelLogin } from '@/lib/actions'
 import { X } from 'lucide-react'
 import {motion} from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 function page() {
@@ -18,6 +18,16 @@ function page() {
     const [currActive, setCurrActive] = useState<"BTN" | "MODAL">("BTN")
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+    useEffect(() => {
+        const checkUser = async ()=>{
+            const token = await getToken()
+            if(token){
+                router.push('/home')
+            }
+        }
+        checkUser()      
+    }, [])
+    
     return (
         <div className='h-screen tracking-tight w-full flex items-center justify-center'>
             <div className="absolute top-5 right-5">
@@ -55,23 +65,24 @@ function page() {
                     Login
                 </CardTitle>
                 <CardContent>
-                    <div className="flex flex-col items-center justify-center gap-3">
+                    <form className="flex flex-col items-center justify-center gap-3">
                         <Input onChange={(e)=>setUsername(e.target.value)} placeholder='Username' />
                         <Input onChange={(e)=>setPassword(e.target.value)} placeholder='Password' />
-                        <Button onClick={async ()=>{
+                        <Button type='submit' onClick={async (e)=>{
+                            e.preventDefault();
                             setIsLoading(true)
-                            const isValid = await handelLogin(username, password)
-                            if(!isValid){
+                            try{
+                                await handelLogin(username, password)
+                                router.push('/home');
+                                toast("Login Success")
+                            } catch (err){
+                                toast("Something went wrong");
                                 setIsLoading(false)
-                                toast("Invalid Credentials or Something went wrong")
-                                return
                             }
-                            router.push('/home');
-                            toast("Login Success")
                         }} className='w-full' disabled={isLoading} >
                             {isLoading && <Spinner/>} Login
                         </Button>
-                    </div>
+                    </form>
                 </CardContent>
             </Card>
         </div>

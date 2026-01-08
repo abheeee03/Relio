@@ -51,16 +51,39 @@ export const addWebsite = async (url: string | null) =>{
     if(!url){
         return
     }
-    let final_url;
     const token = await getToken()
-    if(!url.includes("https://")){
-        final_url = "https://"+final_url
-        final_url.trim();
+    if(!token){
+        redirect('/login')
     }
-    console.log("url adding: ", final_url);
+    console.log("url adding: ", url);
     const res = await axios.post(`${BACKEND_URL}/website/create`, {
-        headers: token,
-        url: final_url
+        url
+    }, {
+        headers: {
+            Authorization: token
+        }
     })
     return res;
+}
+
+
+
+export const logout = () =>{
+    sessionStorage.removeItem("relio-jwt")
+    redirect('/login')
+}
+
+
+export const getWebsiteData = async (websiteID: string) =>{
+    const token = sessionStorage.getItem("relio-jwt");
+    const res = await axios.get(`${BACKEND_URL}/website/ticks/${websiteID}`, {
+        headers: {
+            Authorization: token
+        }
+    })
+    if(!res.data){
+        redirect('/404');
+    }
+
+    return res.data.data
 }

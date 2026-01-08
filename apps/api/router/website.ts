@@ -65,7 +65,7 @@ websiteRouter.get('/status/:id', async (req, res)=>{
 
 })
 websiteRouter.get('/ticks/:id', async (req, res)=>{
-    const {userId} = req.body;
+    const {userId} = req;
     const fromWebsiteId = req.params.id
     const website = await prisma.websites.findFirst({
         where: {
@@ -74,6 +74,13 @@ websiteRouter.get('/ticks/:id', async (req, res)=>{
         },
         include: {
             ticks: {
+                include: {
+                    region: {
+                        select: {
+                            name: true
+                        }
+                    }
+                },
                 orderBy: [{
                     created_at: "desc"
                 }]

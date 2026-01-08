@@ -17,7 +17,7 @@ const pingWebsite = async (website_id: string, url: string)=>{
             let endTime = Date.now()
             const resp = await prisma.ticks.create({
                 data: {
-                    response_ms: String(startTime - endTime),
+                    response_ms: String(endTime - startTime),
                     status: "Up",
                     region_id: REGION_ID,
                     website_id: website_id,

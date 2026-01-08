@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 export const Authenticated = async (req: Request, res: Response, next: NextFunction)=>{
     const headers = req.headers.authorization;
     if(!headers){
-        res.json({
+        res.status(401).json({
             error: "headers not present"
         })
         return

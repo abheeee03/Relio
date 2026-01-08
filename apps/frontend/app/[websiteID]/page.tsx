@@ -1,67 +1,112 @@
-import WebsiteDetails from '@/components/WebsiteDetails';
-import React from 'react'
+"use client"
+import { PingingDotChart } from "@/components/ChartComp";
+import Nav from "@/components/Nav";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getWebsiteData } from "@/lib/actions";
+import { Ticks, WebsiteData } from "@/lib/types";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react";
 
+function WebsiteDetails() {
 
-export type Website = {
-  id: string;
-  url: string;
-  user_id: string;
-  ticks: {
-  id: string;
-  response_ms: number;
-  status: string;
-  region_id: string;
-}[];
-};
+  const {websiteID} = useParams();
+  const [websiteData, setWebsiteData] = useState<null | WebsiteData>(null);
+  const [loading, setLoading] = useState(false)
+  const [checking, setChecking] = useState(false)
+  
+  const getData = async ()=>{
+    setLoading(true)
+    const webData = await getWebsiteData(websiteID as string);
+    setWebsiteData(webData);
+    setLoading(false)
+  }
 
+  useEffect(() => {
+      getData();
+  }, [websiteID])
 
-async function WebsitePage({params}: {params: {websiteID: string}}) {
-    const {websiteID} = await params;
-    let dummy: Website = {
-  id: "site-6fef0567-3de0-4d07-ba4c-0001",
-  url: "https://www.google.com",
-  user_id: "user-541e1ed3-38f2-40fa-be6a-0001",
-  ticks: [
-    {
-      id: "tick-001",
-      response_ms: 132,
-      status: "Up",
-      region_id: "india"
-    },
-    {
-      id: "tick-002",
-      response_ms: 145,
-      status: "Up",
-      region_id: "india"
-    },
-    {
-      id: "tick-003",
-      response_ms: 0,
-      status: "Down",
-      region_id: "india"
-    },
-    {
-      id: "tick-004",
-      response_ms: 210,
-      status: "Up",
-      region_id: "usa"
-    },
-    {
-      id: "tick-005",
-      response_ms: 198,
-      status: "Up",
-      region_id: "usa"
-    },
-    {
-      id: "tick-006",
-      response_ms: 0,
-      status: "Down",
-      region_id: "usa"
+  const handelSort = (val: "USA" | "IN")=>{
+    switch (val){
+      case "USA":
+        let updatedTicks = websiteData?.ticks.filter((a)=>a.region.name === "usa")
+        
     }
-  ]
-};
-    
-    return <WebsiteDetails data={dummy}/>
+  }
+  
+  
+  return (
+    <>
+    <Nav/>
+    {
+      loading || !websiteData ? <div className="h-screen w-full flex gap-2 items-center justify-center">
+         <Spinner/>
+        <p className="text-lg">
+         Please wait while we get data from server 
+        </p>
+      </div> : <div className='min-h-screen w-full flex flex-col items-start justify-start py-22 px-20'>
+        <div className="w-full flex items-center justify-between">
+            <Link href={`${websiteData.url}`} target="_blank" className="flex items-end justify-center group gap-1 cursor-pointer">
+            <h1 className='text-3xl group-hover:underline transition-all'>{websiteData.url.replace("https://", "")} 
+            </h1>
+                <ArrowUpRight className="group-hover:opacity-100 opacity-0 transition-all duration-300" size={30}/> 
+            </Link>
+             <Badge>Current Status: {websiteData.ticks[0].status === "Up" ?  "Active" : "Inactive"}</Badge>
+        </div>
+
+        <div className="w-full flex items-start justify-between mt-5 gap-5">
+            <div className="w-1/2">
+            <PingingDotChart/>
+            </div>
+
+            <div className="w-1/2 h-full flex flex-col items-start justify-start">
+                <div className="w-full flex items-center justify-between">
+                     <h1 className='text-xl font-medium'>Ping History</h1>
+                </div>
+                <div className="mt-6">
+                    <Table className='w-full'>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>
+                                    Region
+                                </TableHead>
+                                <TableHead>
+                                    Response Time
+                                </TableHead>
+                                <TableHead className='text-right'>
+                                    Status
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                    {
+                        !websiteData.ticks || websiteData.ticks.length == 0 ? <div className="">Nothing to show here...</div> : websiteData.ticks.map((t: Ticks)=>(
+                                <TableRow className='w-full' key={t.id}>
+                                <TableCell className='w-90'>
+                                    {t.region.name}
+                                </TableCell>
+                                <TableCell className='w-50'>
+                                    {t.response_ms} ms
+                                </TableCell>
+                                <TableCell className='text-right w-90'>
+                                    {t.status}
+                                </TableCell>
+                                </TableRow>
+                    ))
+                }
+                    </Table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    }
+    </>
+  )
 }
 
-export default WebsitePage
+export default WebsiteDetails
