@@ -122,6 +122,5 @@ userRouter.get('/me', Authenticated, async (req, res)=>{
     }
 })
 
-
 export default userRouter
 
