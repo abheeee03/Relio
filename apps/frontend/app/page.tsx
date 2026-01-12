@@ -1,17 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { Activity, Bell, BarChart3, Globe, Zap, Lock, Clock, Github } from "lucide-react"
-
+import { Activity, Bell, BarChart3, Globe, Zap, Lock, Clock, Github, Monitor, Server } from "lucide-react"
 import localFont from 'next/font/local';
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/logo";
 import { IoIosArrowRoundForward, IoLogoGithub } from "react-icons/io";
 import { FaXTwitter } from "react-icons/fa6";
-import Marquee from "@/components/Marquee";
 import FeatureCards from "@/components/features";
 import { useRouter } from "next/navigation";
-
 
 const Ros = localFont({
   src: './RoslindaleDisplay.ttf',
@@ -22,7 +19,6 @@ const Ros = localFont({
 export default function Landing() {
 
   const router = useRouter()
-
   return (
     <>
       <nav className="w-full z-50 fixed px-60 py-10">
@@ -31,15 +27,15 @@ export default function Landing() {
           <div className="flex gap-3">
             <Button>
               <Link target="_blank" href={"https://github.com/abheeee03"}>
-              <IoLogoGithub />
+                <IoLogoGithub />
               </Link>
             </Button>
             <Button>
               <Link href={"https://x.com/_AbhayHere"}>
-              <FaXTwitter />
+                <FaXTwitter />
               </Link>
             </Button>
-            <Button onClick={()=>{
+            <Button onClick={() => {
               router.push('/login')
             }} size={"sm"}>
               Login
@@ -48,8 +44,8 @@ export default function Landing() {
         </div>
       </nav>
       {/* Hero Section */}
-      <div className="text-white h-screen w-full bg-[#000000]">
-        <div className="absolute flex flex-col items-center justify-center bottom-0 left-0 right-0 top-0 bg-[radial-gradient(110%_120%_at_45%_0%,rgba(255,255,255,0)_45%,rgba(102,51,238,1)_100%)]">
+      <div className="relative text-white h-screen w-full bg-[#000000]">
+        <div className="absolute flex items-center justify-center flex-col bottom-0 left-0 right-0 top-0 bg-[radial-gradient(180%_130%_at_45%_10%,rgba(255,255,255,0)_20%,rgba(94,47,218,1)_100%)]">
           <div className="flex flex-col items-center justify-center gap-10">
             <span className={`text-center ${Ros.className} text-8xl`}>
               <h1 className="text-white">
@@ -71,115 +67,18 @@ export default function Landing() {
           </div>
         </div>
       </div>
-      <div className="relative h-screen w-full bg-[#fafafa]">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:2rem_1.5rem] "></div>
-        <div className="absolute px-10 bottom-0 left-0 right-0 top-0 bg-[linear-gradient(0deg,_rgba(244,244,244,0)_23%,_rgba(68,51,204,0.7)_80%,_rgba(94,47,218,1)_94%)]">
-         <div className="mt-20 text-white">
-           <h4 className="text-lg font-medium">What Relio Actually Does</h4>
-          <h1 className={`text-5xl ${Ros.className}`}>Everything Your Site Needs.</h1>
-          <div className="">
-            <FeatureCards/>
+
+      <div className="h-screen w-full flex items-center text-black bg-[#412097] justify-center px-3">
+        <div className="h-full w-full flex flex-col items-center justify-center border rounded-lg bg-white px-10">
+          <div className="flex flex-col w-full items-center justify-center mb-5">
+            <h4 className="text-2xl">What Relio Actually Does</h4>
+            <h1 className={`text-6xl ${Ros.className}`}>Everything Your Site Needs.</h1>
           </div>
+          <FeatureCards />
         </div>
-        </div>
-        
+
       </div>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-              Everything You Need to Stay Online
-            </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Powerful monitoring tools designed to give you peace of mind
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50 border border-blue-100 dark:border-blue-900">
-              <div className="h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                <Activity className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Real-Time Monitoring
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Monitor your websites every 30 seconds from multiple global locations with instant status updates.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 border border-purple-100 dark:border-purple-900">
-              <div className="h-12 w-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
-                <Bell className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Instant Alerts
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Get notified immediately via email, SMS, Slack, or webhook when your site goes down.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border border-green-100 dark:border-green-900">
-              <div className="h-12 w-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
-                <BarChart3 className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Detailed Analytics
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Track response times, uptime percentage, and performance metrics with beautiful dashboards.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50 border border-orange-100 dark:border-orange-900">
-              <div className="h-12 w-12 bg-orange-600 rounded-lg flex items-center justify-center mb-4">
-                <Globe className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Global Coverage
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Monitor from 10+ locations worldwide to ensure your site is accessible everywhere.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/50 dark:to-amber-950/50 border border-yellow-100 dark:border-yellow-900">
-              <div className="h-12 w-12 bg-yellow-600 rounded-lg flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Performance Metrics
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Track response times, DNS resolution, SSL certificate expiry, and more.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="p-6 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/50 dark:to-blue-950/50 border border-indigo-100 dark:border-indigo-900">
-              <div className="h-12 w-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4">
-                <Lock className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                Secure & Reliable
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Enterprise-grade security with encrypted data and 99.9% uptime SLA for monitoring infrastructure.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Architecture Section */}
+      <div className="h-screen w-full bg-[#412097]"></div>
       <section id="architecture" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">

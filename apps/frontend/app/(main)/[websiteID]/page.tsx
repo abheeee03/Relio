@@ -1,5 +1,4 @@
 "use client"
-import { PingingDotChart } from "@/components/ChartComp";
 import Nav from "@/components/Nav";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,7 +59,6 @@ function WebsiteDetails() {
 
         <div className="w-full flex items-start justify-between mt-5 gap-5">
             <div className="w-1/2">
-            <PingingDotChart/>
             </div>
 
             <div className="w-1/2 h-full flex flex-col items-start justify-start">
