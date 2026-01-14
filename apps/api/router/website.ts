@@ -166,4 +166,38 @@ websiteRouter.get('/all-ticks', async (req, res) => {
     }
 })
 
+
+
+websiteRouter.post("/delete/:id", async (req, res) => {
+    console.log("req come to delete");
+    const { userId } = req;
+    const websiteID = req.params.id
+
+
+    try {
+        await prisma.websites.delete({
+            where: {
+                id: websiteID,
+                user_id: userId
+            }
+        })
+        res.json({
+            success: true
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({
+            err,
+            msg: "something wrong"
+        })
+
+    }
+
+})
+
+
+
+
+
+
 export default websiteRouter

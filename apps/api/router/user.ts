@@ -20,7 +20,7 @@ userRouter.post('/signup', async (req, res) => {
             password
         }
     })
-    if(!response){
+    if (!response) {
         res.json({
             error: "something went wrong"
         })
@@ -46,19 +46,19 @@ userRouter.post('/signin', async (req, res) => {
             username
         }
     })
-    if(!response){
+    if (!response) {
         res.json({
             error: "user not found"
         })
         return
     }
-    if(response.password != password){
+    if (response.password != password) {
         res.json({
             erorr: "invalid id or pass"
         })
         return
     }
-    const token = jwt.sign({userId: response.id}, process.env.JWT_SECRET as string)
+    const token = jwt.sign({ userId: response.id }, process.env.JWT_SECRET as string)
     res.json({
         token,
         msg: "user is valid"
@@ -66,15 +66,15 @@ userRouter.post('/signin', async (req, res) => {
 
 })
 
-userRouter.post('/add-region', async (req, res)=>{
-    const {name} = req.body
+userRouter.post('/add-region', async (req, res) => {
+    const { name } = req.body
     const repsonse = await prisma.region.create({
         data: {
-            name 
+            name
         }
     })
 
-    if(!repsonse){
+    if (!repsonse) {
         res.json({
             error: "error while adding region"
         })
@@ -88,9 +88,9 @@ userRouter.post('/add-region', async (req, res)=>{
 })
 
 
-userRouter.get('/me', Authenticated, async (req, res)=>{
-    const {userId} = req;
-    try{
+userRouter.get('/me', Authenticated, async (req, res) => {
+    const { userId } = req;
+    try {
         const data = await prisma.user.findFirst({
             where: {
                 id: userId
@@ -103,7 +103,8 @@ userRouter.get('/me', Authenticated, async (req, res)=>{
                         ticks: {
                             select: {
                                 status: true,
-                            }, 
+                                response_ms: true
+                            },
                             orderBy: {
                                 created_at: "desc"
                             },
@@ -116,7 +117,7 @@ userRouter.get('/me', Authenticated, async (req, res)=>{
         res.json({
             data
         })
-    } catch (err){
+    } catch (err) {
         console.log(err);
         res.json("something went wrong")
     }

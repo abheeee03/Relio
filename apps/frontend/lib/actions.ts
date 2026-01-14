@@ -111,3 +111,26 @@ export const getAllTicks = async (limit: number = 15, offset: number = 0) => {
         return { data: [], total: 0, hasMore: false }
     }
 }
+
+export const deleteWebsite = async (websiteID: string) => {
+    const token = sessionStorage.getItem("relio-jwt");
+    if (!token) {
+        redirect('/login');
+    }
+
+    try {
+        const res = await axios.post(`${BACKEND_URL}/website/delete/${websiteID}`, {}, {
+            headers: {
+                Authorization: token
+            }
+        })
+        console.log(res);
+        if (!res) {
+            return { success: false }
+        }
+        return { success: true, data: res.data }
+    } catch (error) {
+        console.error("Failed to delete website:", error)
+        return { success: false, error }
+    }
+}

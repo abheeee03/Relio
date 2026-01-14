@@ -6,14 +6,18 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { addWebsite, getUserData } from "@/lib/actions"
+import { addWebsite, deleteWebsite, getUserData } from "@/lib/actions"
 import { WebsiteResponse } from "@/lib/types"
-import { ArrowUpRight, Globe, Plus, RefreshCw } from "lucide-react"
+import { ArrowUpRight, Globe, Plus, RefreshCw, Trash2Icon } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 function WebsitesPage() {
   const [websites, setWebsites] = useState<WebsiteResponse[] | null>(null)
+
+  const [deleteDialog, setdeleteDialog] = useState(false)
+  const [currDeleteItem, setcurrDeleteItem] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newUrl, setNewUrl] = useState("")
@@ -76,6 +80,42 @@ function WebsitesPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-10 py-4">
+      <Dialog open={deleteDialog} onOpenChange={setdeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Are you Sure?
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center justify-center">
+            <p>
+              This is a destructive action, and all data related to this website will be deleted.
+            </p>
+            <div className="w-full mt-4 flex items-end justify-end gap-3">
+              <Button onClick={() => {
+                setcurrDeleteItem(null)
+                setdeleteDialog(false)
+              }}>
+                Cancel
+              </Button>
+              <Button onClick={async () => {
+                if (!currDeleteItem) return;
+                const res = await deleteWebsite(currDeleteItem)
+                if (!res.success) {
+                  toast("Try again after sometime")
+                  return
+                }
+                toast("Website deleted successfully")
+                setcurrDeleteItem(null)
+                setdeleteDialog(false)
+                await fetchWebsites()
+              }} variant={"destructive"}>
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Websites</h1>
@@ -98,7 +138,7 @@ function WebsitesPage() {
               <DialogHeader>
                 <DialogTitle>Add New Website</DialogTitle>
                 <DialogDescription>
-                  Enter the URL of the website you want to monitor. We&apos;ll start tracking its uptime immediately.
+                  Enter the URL of the website you want to monitor.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
@@ -162,7 +202,7 @@ function WebsitesPage() {
                       Status
                     </TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Uptime (Last 30 checks)
+                      Response Time
                     </TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
                       Actions
@@ -170,7 +210,7 @@ function WebsitesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {websites.map((website) => {
+                  {websites.map((website, idx) => {
                     const currentStatus = website.ticks?.[0]?.status || "Unknown"
                     return (
                       <TableRow
@@ -178,15 +218,13 @@ function WebsitesPage() {
                         className="hover:bg-muted/80 transition-colors border-b border-border/30 last:border-0"
                       >
                         <TableCell className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 border border-border/50 flex items-center justify-center">
-                              <Globe className="h-5 w-5 text-primary" />
-                            </div>
+                          <div className="flex items-center gap-3 px-4">
                             <div>
                               <Link
                                 href={`/${website.id}`}
                                 className="font-medium hover:underline flex items-center gap-1 group"
                               >
+                                <span>{idx + 1}. </span>
                                 {website.url.replace("https://", "").replace("http://", "")}
                                 <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </Link>
@@ -206,18 +244,28 @@ function WebsitesPage() {
                         <TableCell>
                           <div className="flex items-center gap-0.5">
                             {website.ticks.slice(0, 30).reverse().map((tick, i) => (
-                              <div
+                              <Badge
                                 key={i}
-                                className={`h-6 w-1.5 rounded-sm ${getTickColor(tick.status)} opacity-80 hover:opacity-100 transition-opacity`}
-                                title={tick.status}
-                              />
+                                className={`${getTickColor(tick.status)} opacity-80 px-1 py-1 hover:opacity-100 transition-opacity`}
+                              >
+                                {
+                                  tick.response_ms
+                                }
+                                {" "} ms
+                              </Badge>
                             ))}
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
+                          <Button onClick={() => {
+                            setcurrDeleteItem(website.id)
+                            setdeleteDialog(true)
+                          }} variant="ghost" size="sm">
+                            <Trash2Icon className="h-3 w-3" />
+                          </Button>
                           <Link href={`/${website.id}`}>
                             <Button variant="ghost" size="sm">
-                              View Details
+                              <ArrowUpRight className="h-3 w-3" />
                             </Button>
                           </Link>
                         </TableCell>
