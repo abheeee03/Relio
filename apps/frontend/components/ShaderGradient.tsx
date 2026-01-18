@@ -9,9 +9,11 @@ function ShaderGradientComponent() {
                 width: '100%',
                 height: '100%',
                 position: "absolute",
-                zIndex: 0
+                top: 0,
+                left: 0,
+                zIndex: -1
             }}
-            lazyLoad={false}
+            lazyLoad={undefined}
 
             fov={undefined}
             pixelDensity={1}
@@ -19,35 +21,35 @@ function ShaderGradientComponent() {
         >
             <ShaderGradient
                 animate="on"
-                type="waterPlane"
+                type="plane"
                 wireframe={false}
                 shader="defaults"
-                uTime={0}
-                uSpeed={0.3}
-                uStrength={0.4}
-                uDensity={0.8}
-                uFrequency={5.5}
-                uAmplitude={7}
-                positionX={3.5}
-                positionY={0.8}
-                positionZ={0}
-                rotationX={121}
-                rotationY={158}
-                rotationZ={60}
-                color1="#ffffff"
-                color2="#b9aefb"
-                color3="#ffffff"
-                reflection={0.5}
+                uTime={13.5}
+                uSpeed={0.08}
+                uStrength={1.5}
+                uDensity={1.5}
+                uFrequency={0}
+                uAmplitude={0}
+                positionX={-0.3}
+                positionY={0.1}
+                positionZ={-1.2}
+                rotationX={-6}
+                rotationY={160}
+                rotationZ={89}
+                color1="#242880"
+                color2="#8d7dca"
+                color3="#393939"
+                reflection={0.1}
 
                 // View (camera) props
-                cAzimuthAngle={250}
-                cPolarAngle={140}
-                cDistance={0}
-                cameraZoom={10.5}
+                cAzimuthAngle={180}
+                cPolarAngle={80}
+                cDistance={2.8}
+                cameraZoom={9.1}
 
                 // Effect props
                 lightType="3d"
-                brightness={1.5}
+                brightness={1}
                 envPreset="city"
                 grain="on"
 

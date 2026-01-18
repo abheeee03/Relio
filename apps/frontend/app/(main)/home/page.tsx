@@ -9,7 +9,7 @@ import { getUserData } from "@/lib/actions"
 import { WebsiteResponse } from "@/lib/types"
 import { ArrowRight, ArrowUpRight, Globe } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false)
@@ -41,6 +41,30 @@ export default function Page() {
     fetchData();
   }, [])
 
+  const chartData = useMemo(() => {
+    if (!websitesData) return []
+
+    const allTicks: { date: string; responseTime: number; status: "Up" | "Down" | "Unknown" }[] = []
+
+    websitesData.forEach(website => {
+      if (website.ticks) {
+        website.ticks.slice(0, 20).forEach(tick => {
+          allTicks.push({
+            date: tick.response_ms,
+            responseTime: parseInt(tick.response_ms) || 0,
+            status: tick.status
+          })
+        })
+      }
+    })
+
+    return allTicks.slice(0, 50).map((tick, index) => ({
+      date: new Date(Date.now() - (50 - index) * 60000).toISOString(),
+      responseTime: tick.responseTime,
+      status: tick.status
+    }))
+  }, [websitesData])
+
   const getStatusColor = (status: "Up" | "Down" | "Unknown") => {
     switch (status) {
       case "Up":
@@ -66,39 +90,39 @@ export default function Page() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="bg-muted/50 aspect-video rounded-xl" >
+        <div className="rounded-xl w-full border-t-2 shadow-lg dark:shadow-foreground/20 dark:shadow-xs">
           {
             !websitesData && isLoading ? <Skeleton className="w-full h-full" /> :
-              <div className="w-full h-full px-5 py-5">
+              <div className="w-full h-full px-6 py-5">
                 <h4 className="text-lg">Websites Monitoring</h4>
-                <div className="border h-2/3 rounded-lg mt-3 px-5 py-1">
-                  <h1 className="text-7xl">{totalWebsites}</h1>
-                  <p className="mt-2">we are keeping an eye here</p>
+                <div className="border h-2/3 rounded-lg mt-3 px-5 py-3 bg-muted/50">
+                  <h1 className="text-6xl font-semibold">{totalWebsites}</h1>
+                  <p className="mt-2 text-muted-foreground">we are keeping an eye here</p>
                 </div>
               </div>
           }
         </div>
-        <div className="bg-muted/50 aspect-video rounded-xl" >
+        <div className="rounded-xl w-full border-t-2 shadow-lg dark:shadow-foreground/20 dark:shadow-xs">
           {
             !websitesData && isLoading ? <Skeleton className="w-full h-full" /> :
-              <div className="w-full h-full px-5 py-5">
+              <div className="w-full h-full px-6 py-5">
                 <h4 className="text-lg">Active Websites</h4>
-                <div className="border h-2/3 rounded-lg mt-3 px-5 py-1">
-                  <h1 className="text-7xl">{UpW}</h1>
-                  <p className="mt-2">everything is good here</p>
+                <div className="border h-2/3 rounded-lg mt-3 px-5 py-3 bg-muted/50">
+                  <h1 className="text-6xl font-semibold">{UpW}</h1>
+                  <p className="mt-2 text-muted-foreground">everything is good here</p>
                 </div>
               </div>
           }
         </div>
-        <div className="bg-muted/50 aspect-video rounded-xl" >
+        <div className="rounded-xl w-full border-t-2 shadow-lg dark:shadow-foreground/20 dark:shadow-xs">
           {
             !websitesData && isLoading ? <Skeleton className="w-full h-full" /> :
               <div className="w-full h-full px-6 py-5">
                 <h4 className="text-lg">Down Websites</h4>
-                <div className="border h-2/3 rounded-lg mt-3 px-5 py-1">
-                  <h1 className="text-7xl">{DownW}</h1>
+                <div className="border h-2/3 rounded-lg mt-3 px-5 py-3 bg-muted/50">
+                  <h1 className={`text-6xl font-semibold`}>{DownW}</h1>
                   {
-                    DownW === 0 ? <p className="">all good! nothing to worry about</p> : <p className="mt-2">this should be fixed</p>
+                    DownW === 0 ? <p className="mt-2 text-muted-foreground">all good! nothing to worry</p> : <p className="mt-2 text-muted-foreground">this should be fixed</p>
                   }
                 </div>
               </div>
@@ -106,7 +130,7 @@ export default function Page() {
         </div>
       </div>
       <div className="min-h-screen w-full rounded-xl" >
-        <ChartBarInteractive />
+        <ChartBarInteractive data={chartData} />
         <Card className="bg-muted/50 border-0 shadow-none mt-5">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-medium">Website Overview</CardTitle>
