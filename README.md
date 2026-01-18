@@ -1,135 +1,165 @@
-# Turborepo starter
+# Relio
 
-This Turborepo starter is maintained by the Turborepo core team.
+#### Relio is an uptime monitoring platform that keeps an eye on your websites from multiple regions worldwide. Get instant alerts when your site goes down, track response times, and view detailed ping history.
 
-## Using this example
+## Features
 
-Run the following command:
+-  **Global Monitoring** - Workers from different regions (countries) ping your sites
+-  **Real-time Alerts** - Instant notifications via Email, Slack, SMS (comming soon)
+-  **Interactive Charts** - Visualize ping history and response times
+-  **Live Updates** - See status changes as they happen
+-  **Responsive Dashboard** - Monitor from any device
 
-```sh
-npx create-turbo@latest
-```
+## 🛠️ Tech Stack
 
-## What's inside?
+#### This Project uses  Turbo Repo with Bun
 
-This Turborepo includes the following packages/apps:
+### Frontend
+- **Next.js 15** - App Router
+- **TypeScript** 
+- **Tailwind CSS** 
+- **Shadcn/ui** 
 
-### Apps and Packages
+### Backend
+- **Bun**
+- **Prisma**
+- **PostgreSQL** 
+- **Redis** 
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Infrastructure
+- **Turborepo** - Monorepo build system
+- **Docker** - Containerization (for workers)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 📁 Project Structure
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+relio/
+├── apps/
+│   ├── frontend/          # Next.js dashboard & landing page
+│   │   ├── app/           # App router pages
+│   │   │   ├── (main)/    # Protected dashboard routes
+│   │   │   │   ├── home/        # Dashboard home
+│   │   │   │   ├── [websiteID]/ # Website details page
+│   │   │   │   ├── logs/        # Activity logs
+│   │   │   │   ├── notifications/
+│   │   │   │   └── websites/    # Website management
+│   │   │   ├── login/     # Authentication
+│   │   │   └── page.tsx   # Landing page
+│   │   ├── components/    # UI components
+│   │   │   ├── ui/        # Shadcn components
+│   │   │   └── ...        # Custom components
+│   │   └── lib/           # Utilities & actions
+│   │
+│   ├── api/               # Hono REST API server
+│   ├── worker/            # Ping workers (multi-region)
+│   └── pusher/            # Real-time event publisher
+│
+├── packages/
+│   ├── store/             # Prisma schema & database client
+│   │   └── prisma/
+│   │       └── schema.prisma
+│   ├── redis-stream/      # Redis pub/sub utilities
+│   ├── eslint-config/     # Shared ESLint config
+│   └── typescript-config/ # Shared TypeScript config
+│
+├── turbo.json             # Turborepo configuration
+└── package.json           # Root dependencies
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🗃️ Database Schema
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+```prisma
+model User {
+  id        String     @id @default(uuid())
+  username  String
+  password  String
+  createdAt DateTime   @default(now())
+  websites  websites[]
+}
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+model websites {
+  id      String  @id @default(uuid())
+  url     String
+  user_id String
+  ticks   ticks[]
+  user    User    @relation(fields: [user_id], references: [id])
+}
 
-### Develop
+model region {
+  id    String  @id @default(uuid())
+  name  String
+  ticks ticks[]
+}
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+model ticks {
+  id          String   @id @default(uuid())
+  response_ms String
+  status      Status   // Up | Down | Unknown
+  region_id   String
+  website_id  String
+  created_at  DateTime @default(now())
+}
 ```
 
-### Remote Caching
+## 🏃 Getting Started
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+### Prerequisites
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+- [Bun](https://bun.sh/) >= 1.0
+- [Node.js](https://nodejs.org/) >= 18
+- PostgreSQL database
+- Redis instance
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Installation
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+1. Clone the repository
+```bash
+git clone https://github.com/abheeee03/Relio.git
+cd Relio
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+2. Install dependencies
+```bash
+bun install
 ```
 
-## Useful Links
+3. Set up environment variables
+```bash
+# apps/frontend/.env
+NEXT_PUBLIC_API_URL=http://localhost:3001
 
-Learn more about the power of Turborepo:
+# apps/api/.env
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=your-secret
+```
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+4. Generate Prisma client
+```bash
+cd packages/store
+bunx prisma generate
+bunx prisma db push
+```
+
+5. Start development servers
+```bash
+# From root directory
+bun run dev
+```
+
+Or run individually:
+```bash
+# API server
+cd apps/api && bun run dev
+
+# Frontend
+cd apps/frontend && bun run dev
+
+# Worker (optional)
+cd apps/worker && bun run dev
+```
+
+## 🔗 Links
+
+- **More here:** [abhee.dev](https://abhee.dev)
+- **Want to know more? shoot a DM here**: [@_AbhayHere](https://x.com/_AbhayHere)
