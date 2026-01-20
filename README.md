@@ -110,6 +110,27 @@ model ticks {
 - PostgreSQL database
 - Redis instance
 
+### Docker Setup for Redis
+
+1. Start Redis container
+```bash
+docker run -d --name relio-redis -p 6379:6379 redis:latest
+```
+
+2. Create Redis Stream and Consumer Group
+```bash
+# Create the stream with an initial entry (required before creating consumer group)
+docker exec relio-redis redis-cli XADD relio:website "*" init init
+
+# Create consumer group for workers
+docker exec relio-redis redis-cli XGROUP CREATE relio:website workers 0 MKSTREAM
+
+# (Optional) Verify stream was created
+docker exec relio-redis redis-cli XINFO STREAM relio:website
+```
+
+> **Note:** The consumer group `workers` is used by the worker instances. Each worker uses a unique consumer ID within this group.
+
 ### Installation
 
 1. Clone the repository

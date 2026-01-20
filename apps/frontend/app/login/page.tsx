@@ -32,20 +32,20 @@ function page() {
     return (
         <>
             <div className='h-screen tracking-tight w-full flex items-center justify-center'>
-                <ShaderGradientComponent />
-                {/* <div className="absolute top-5 right-5">
+                {/* <ShaderGradientComponent /> */}
+                <div className="absolute top-5 right-5">
                     <ThemeToggleButton start="top-down" variant="rectangle" />
-                </div> */}
+                </div>
                 <div className="absolute bottom-5 left-5">
                     {
-                        currActive === "BTN" && <motion.div onClick={() => setCurrActive("MODAL")} layoutId='demo-account' className="relative bg-transparent backdrop-blur-xl cursor-pointer rounded-xl px-5 py-5">
+                        currActive === "BTN" && <motion.div onClick={() => setCurrActive("MODAL")} layoutId='demo-account' className="relative bg-transparent border backdrop-blur-xl cursor-pointer rounded-xl px-5 py-5">
                             <motion.h1 layoutId='demo-head'>Use Demo Account</motion.h1>
                         </motion.div>
                     }
                     {
-                        currActive === "MODAL" && <motion.div layoutId='demo-account' className='relative bg-transparent backdrop-blur-xl cursor-pointer rounded-xl px-5 py-5 flex flex-col items-start justify-center gap-4'>
+                        currActive === "MODAL" && <motion.div layoutId='demo-account' className='relative bg-transparent backdrop-blur-xl cursor-pointer border rounded-xl px-5 py-5 flex flex-col items-start justify-center gap-4'>
                             <div className="mb-3 flex w-full items-center justify-between">
-                                <motion.h1 layoutId='demo-head' className=''>Login Using Demo Account</motion.h1>
+                                <motion.h1 layoutId='demo-head'>Login Using Demo Account</motion.h1>
                                 <Button onClick={() => setCurrActive("BTN")} variant={"ghost"}>
                                     <X size={15} />
                                 </Button>
