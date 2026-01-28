@@ -1,16 +1,15 @@
 "use client"
 import CopyButton from '@/components/Copybtn'
-import ShaderGradientComponent from '@/components/ShaderGradient'
 import { ThemeToggleButton } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { getToken, handelLogin } from '@/lib/actions'
+import { handelLogin } from '@/lib/actions'
 import { X } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 function page() {
@@ -19,15 +18,15 @@ function page() {
     const [currActive, setCurrActive] = useState<"BTN" | "MODAL">("BTN")
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
-    useEffect(() => {
-        const checkUser = async () => {
-            const token = await getToken()
-            if (token) {
-                router.push('/home')
-            }
-        }
-        checkUser()
-    }, [])
+    // useEffect(() => {
+    //     const checkUser = async () => {
+    //         const token = await getToken()
+    //         if (token) {
+    //             router.push('/home')
+    //         }
+    //     }
+    //     checkUser()
+    // }, [])
 
     return (
         <>
